@@ -1,15 +1,18 @@
-FROM oven/bun:1  
-
-WORKDIR /app  
-
-COPY package*.json ./  
-
-RUN bun install  
-
-COPY . .  
-
+FROM oven/bun:1-alpine as builder
+WORKDIR /app
+COPY package.json bun.lockb ./
+RUN bun install --fronzen-lockfile
+COPY . .
 RUN bun run build
 
-EXPOSE 3000  
+FROM oven/bun:1-alpine as runner
+WORKDIR /app
+COPY --from=builder /app/package.json .
+COPY --from=builder /app/bun.lockb .
+COPY --from=builder /app/next.config.mjs .
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
 
 CMD ["bun", "start"]
+EXPOSE 3000
