@@ -61,6 +61,7 @@ export default function Home() {
                   <TableCell className="text-left">Uitleg</TableCell>
                   <TableCell className="text-left">Kilometers</TableCell>
                   <TableCell className="text-left">Datum</TableCell>
+                  <TableCell className="text-left">Verwijderen</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -74,6 +75,18 @@ export default function Home() {
                     </TableCell>
                     <TableCell className="text-left">
                       {registration.date.toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        className="bg-red-500 text-white hover:bg-red-800"
+                        onClick={() =>
+                          setRegistrations((prev) =>
+                            prev.filter((r) => r.id !== registration.id)
+                          )
+                        }
+                      >
+                        Verwijderen
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
