@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  appendRegistration,
+  deleteRegistration,
+  getRegistrations,
+} from "@/api/registration";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,7 +16,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Registration } from "@/types/registration";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const today = new Date();
@@ -19,23 +24,14 @@ export default function Home() {
 
   const [registrations, setRegistrations] = useState<Registration[]>([]);
 
-  function appendRegistration() {
-    setRegistrations((prev) =>
-      [
-        {
-          id: prev.length.toString(),
-          text: (document.getElementById("text") as HTMLInputElement).value,
-          kilometers: Number(
-            (document.getElementById("kilometers") as HTMLInputElement).value
-          ),
-          date: new Date(
-            (document.getElementById("date") as HTMLInputElement).value
-          ),
-        },
-        ...prev,
-      ].sort((a, b) => a.date.getTime() - b.date.getTime())
-    );
-  }
+  useEffect(() => {
+    let registrations = getRegistrations();
+    registrations
+      .then((res) => res.json())
+      .then((data) => {
+        setRegistrations(data.registrations);
+      });
+  }, []);
 
   return (
     <div className="flex items-center flex-col">
@@ -44,13 +40,18 @@ export default function Home() {
         <Input placeholder="Uitleg" type="text" id="text" />
         <Input placeholder="Kilometers" type="number" id="kilometers" />
         <Input type="date" id="date" defaultValue={initialDate} />
-        <Button className="w-full" onClick={appendRegistration}>
+        <Button
+          className="w-full"
+          onClick={() => {
+            appendRegistration();
+          }}
+        >
           Voeg toe
         </Button>
       </div>
       <br />
       <div className="flex flex-row justify-center w-full gap-5">
-        <Card className="w-1/3">
+        <Card className="w-1/2">
           <CardHeader>
             <CardTitle className="text-center">Geschiedenis</CardTitle>
           </CardHeader>
@@ -68,21 +69,30 @@ export default function Home() {
                 {registrations.map((registration) => (
                   <TableRow key={registration.id}>
                     <TableCell className="text-left">
-                      {registration.text}
+                      {registration.description}
                     </TableCell>
                     <TableCell className="text-left">
                       {registration.kilometers}
                     </TableCell>
                     <TableCell className="text-left">
-                      {registration.date.toLocaleDateString()}
+                      {registration.date
+                        .toString()
+                        .split("T")[0]
+                        .split("-")
+                        .reverse()
+                        .join("-")}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-left">
                       <Button
                         className="bg-red-500 text-white hover:bg-red-800"
                         onClick={() =>
-                          setRegistrations((prev) =>
-                            prev.filter((r) => r.id !== registration.id)
-                          )
+                          deleteRegistration(registration.id).then(() => {
+                            setRegistrations(
+                              registrations.filter(
+                                (reg) => reg.id !== registration.id
+                              )
+                            );
+                          })
                         }
                       >
                         Verwijderen
@@ -94,7 +104,7 @@ export default function Home() {
             </Table>
           </CardContent>
         </Card>
-        <Card className="w-1/3">
+        <Card className="flex flex-col justify-center w-fit h-fit">
           <CardHeader>
             <CardTitle className="text-center">
               Totaal aantal kilometers

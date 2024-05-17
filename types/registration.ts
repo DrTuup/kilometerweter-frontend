@@ -1,6 +1,6 @@
 export type Registration = {
-  id: string;
-  text: string;
+  id: number;
+  description: string;
   kilometers: number;
   date: Date;
 };
