@@ -16,6 +16,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Registration } from "@/types/registration";
+import { TrashIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -34,9 +35,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex items-center flex-col">
-      <h1 className="text-center text-5xl font-bold p-5">Kilometerweter</h1>
-      <div className="flex justify-center items-center flex-col w-1/3 gap-2">
+    <div className="flex items-center flex-col p-4">
+      <h1 className="text-center text-3xl font-bold pb-4">Kilometerweter</h1>
+      <div className="flex justify-center items-center flex-col w-full gap-2">
         <Input placeholder="Uitleg" type="text" id="text" />
         <Input placeholder="Kilometers" type="number" id="kilometers" />
         <Input type="date" id="date" defaultValue={initialDate} />
@@ -50,8 +51,18 @@ export default function Home() {
         </Button>
       </div>
       <br />
-      <div className="flex flex-row justify-center w-full gap-5">
-        <Card className="w-1/2">
+      <div className="flex flex-col justify-center w-full gap-2">
+        <Card className="flex flex-col justify-center w-full h-fit">
+          <CardHeader>
+            <CardTitle className="text-center">
+              Totaal aantal kilometers
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-center text-3xl font-bold">
+            {registrations.reduce((acc, cur) => acc + cur.kilometers, 0)}
+          </CardContent>
+        </Card>
+        <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-center">Geschiedenis</CardTitle>
           </CardHeader>
@@ -61,8 +72,7 @@ export default function Home() {
                 <TableRow>
                   <TableCell className="text-left">Uitleg</TableCell>
                   <TableCell className="text-left">Kilometers</TableCell>
-                  <TableCell className="text-left">Datum</TableCell>
-                  <TableCell className="text-left">Verwijderen</TableCell>
+                  <TableCell className="text-left">Registratiedatum</TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -74,7 +84,7 @@ export default function Home() {
                     <TableCell className="text-left">
                       {registration.kilometers}
                     </TableCell>
-                    <TableCell className="text-left">
+                    <TableCell className="text-left w-full">
                       {registration.date
                         .toString()
                         .split("T")[0]
@@ -95,23 +105,13 @@ export default function Home() {
                           })
                         }
                       >
-                        Verwijderen
+                        <TrashIcon size={24} />
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-          </CardContent>
-        </Card>
-        <Card className="flex flex-col justify-center w-fit h-fit">
-          <CardHeader>
-            <CardTitle className="text-center">
-              Totaal aantal kilometers
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center text-4xl font-bold">
-            {registrations.reduce((acc, cur) => acc + cur.kilometers, 0)}
           </CardContent>
         </Card>
       </div>
