@@ -1,7 +1,7 @@
 FROM oven/bun:1-alpine as builder
 WORKDIR /app
 COPY package.json bun.lockb ./
-RUN bun install --fronzen-lockfile
+RUN bun install --frozen-lockfile
 COPY . .
 RUN bun run build
 

@@ -45,3 +45,13 @@ export async function getRegistrations() {
   let registrations: Registration[] = [];
   return fetch(env("NEXT_PUBLIC_API_URL") + "/registrations");
 }
+
+export async function updateRegistration(registration: Registration) {
+  fetch(API_URL + "/registrations/" + registration.id, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(registration),
+  });
+}

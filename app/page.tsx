@@ -4,7 +4,17 @@ import {
   appendRegistration,
   deleteRegistration,
   getRegistrations,
+  updateRegistration,
 } from "@/api/registration";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +26,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Registration } from "@/types/registration";
-import { TrashIcon } from "lucide-react";
+import { PencilIcon, TrashIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -107,6 +117,62 @@ export default function Home() {
                       >
                         <TrashIcon size={24} />
                       </Button>
+                    </TableCell>
+                    <TableCell className="text-left">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline">
+                            <PencilIcon size={24} />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Bewerkt registratie</DialogTitle>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <Input
+                              type="text"
+                              id="text"
+                              placeholder={registration.description}
+                              onChange={(e) => {
+                                registration.description = e.target.value;
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              id="kilometers"
+                              placeholder={registration.kilometers.toString()}
+                              onChange={(e) => {
+                                registration.kilometers = Number(
+                                  e.target.value
+                                );
+                              }}
+                            />
+                            <Input
+                              type="date"
+                              id="date"
+                              placeholder={
+                                new Date(registration.date)
+                                  .toISOString()
+                                  .split("T")[0]
+                              }
+                              onChange={(e) => {
+                                registration.date = new Date(e.target.value);
+                              }}
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button
+                              onClick={() => {
+                                updateRegistration(registration);
+                                window.location.reload();
+                              }}
+                            >
+                              Save changes
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}
